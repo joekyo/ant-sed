@@ -1,0 +1,69 @@
+<project name="tests" default="tests">
+
+  <taskdef resource="my/tasks/antlib.xml">
+    <classpath>
+      <pathelement location="../my-tasks.jar"/>
+    </classpath>
+  </taskdef>
+
+  <target name="tests">
+    <touch file="a"/>
+    <antcall target="test_appendline"/>
+    <antcall target="test_appendline_regex"/>
+    <antcall target="test_appendline_concat"/>
+    <delete file="a"/>
+  </target>
+
+
+  <target name="test_appendline">
+    <truncate file="a"/>
+    <appendline add="y=2" file="a"/>
+    <appendline after="y" add="z=3" file="a"/>
+    <appendline before="y" add="x=1" file="a"/>
+    <deleteline contain="y" file="a"/>
+
+    <property file="a"/>
+    <fail message="test `appendline` failed: file 'a' should contain 'x'" unless="x"/>
+    <fail message="test `appendline` failed: file 'a' should not contain 'y'" if="y"/>
+    <fail message="test `appendline` failed: file 'a' should contain 'z'" unless="z"/>
+  </target>
+
+
+  <target name="test_appendline_regex">
+    <truncate file="a"/>
+    <appendline add="y=2" file="a"/>
+    <appendline after="RE: [x-z]=2" add="z=3" file="a"/>
+    <appendline before="RE: y=\d" add="x=1" file="a"/>
+    <deleteline contain="y" file="a"/>
+
+    <property file="a"/>
+    <fail message="test `appendline regex` failed: file 'a' should contain 'x'" unless="x"/>
+    <fail message="test `appendline regex` failed: file 'a' should not contain 'y'" if="y"/>
+    <fail message="test `appendline regex` failed: file 'a' should contain 'z'" unless="z"/>
+  </target>
+
+
+  <target name="test_appendline_concat">
+    <truncate file="a"/>
+    <touch file="b"/>
+    <appendline add="x=1" file="b"/>
+    <touch file="c"/>
+    <appendline add="y=2" file="c"/>
+    <touch file="d"/>
+    <appendline add="z=3" file="d"/>
+
+    <appendline file="a" concat="b"/> <!-- x=1 -->
+    <appendline file="a" after="z=3" concat="b"/> <!-- x=1 -->
+    <appendline file="a" before="x=1" concat="d"/> <!-- z=3, x=1 -->
+
+    <delete file="b"/>
+    <delete file="c"/>
+    <delete file="d"/>
+
+    <property file="a"/>
+    <fail message="test `appendline concat` failed: file 'a' should contain 'x'" unless="x"/>
+    <fail message="test `appendline concat` failed: file 'a' should not contain 'y'" if="y"/>
+    <fail message="test `appendline concat` failed: file 'a' should contain 'z'" unless="z"/>
+  </target>
+
+</project>

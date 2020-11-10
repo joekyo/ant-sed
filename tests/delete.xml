@@ -1,0 +1,96 @@
+<project name="tests" default="tests">
+
+  <taskdef resource="my/tasks/antlib.xml">
+    <classpath>
+      <pathelement location="../my-tasks.jar"/>
+    </classpath>
+  </taskdef>
+
+  <target name="tests">
+    <touch file="a"/>
+    <antcall target="test_deleteline"/>
+    <antcall target="test_deleteline_regex"/>
+    <antcall target="test_deleteline_next"/>
+    <antcall target="test_deleteline_skip"/>
+    <delete file="a"/>
+  </target>
+
+
+  <target name="test_deleteline">
+    <truncate file="a"/>
+    <appendline add="x=0" file="a"/>
+    <appendline add="y=1" file="a"/>
+    <appendline add="x=0" file="a"/>
+    <appendline add="z=3" file="a"/>
+    <appendline add="x=1" file="a"/>
+    <appendline add="x=2" file="a"/>
+    <appendline add="x=3" file="a"/>
+
+    <deleteline from="x=0" until="x=0" file="a"/>
+    <deleteline from="x=1" until="x=2" file="a"/>
+    <deleteline contain="z" file="a"/>
+
+    <property file="a"/>
+    <fail message="test `deleteline` failed: file 'a' should contain 'x'" unless="x"/>
+    <fail message="test `deleteline` failed: file 'a' should not contain 'y'" if="y"/>
+    <fail message="test `deleteline` failed: file 'a' should not contain 'z'" if="z"/>
+  </target>
+
+
+  <target name="test_deleteline_regex">
+    <truncate file="a"/>
+    <appendline add="x=0" file="a"/>
+    <appendline add="y=1" file="a"/>
+    <appendline add="x=0" file="a"/>
+    <appendline add="z=3" file="a"/>
+    <appendline add="x=1" file="a"/>
+    <appendline add="x=2" file="a"/>
+    <appendline add="x=3" file="a"/>
+
+    <deleteline from="RE: [x-z]=0" until="x=0" file="a"/>
+    <deleteline from="x=1" until="RE: x=\d" file="a"/>
+    <deleteline contain="RE: z=\d" file="a"/>
+
+    <property file="a"/>
+    <fail message="test `deleteline regex` failed: file 'a' should contain 'x'" unless="x"/>
+    <fail message="test `deleteline regex` failed: file 'a' should not contain 'y'" if="y"/>
+    <fail message="test `deleteline regex` failed: file 'a' should not contain 'z'" if="z"/>
+  </target>
+
+
+  <target name="test_deleteline_next">
+    <truncate file="a"/>
+    <appendline add="x=0" file="a"/>
+    <appendline add="y=1" file="a"/>
+    <appendline add="y=0" file="a"/>
+    <appendline add="y=0" file="a"/>
+    <appendline add="z=2" file="a"/>
+
+    <deleteline contain="y=1" next="1" file="a"/>
+    <deleteline contain="RE: y=\d" next="1" file="a"/>
+
+    <property file="a"/>
+    <fail message="test `deleteline next` failed: file 'a' should contain 'x'" unless="x"/>
+    <fail message="test `deleteline next` failed: file 'a' should not contain 'y'" if="y"/>
+    <fail message="test `deleteline next` failed: file 'a' should not contain 'z'" if="z"/>
+  </target>
+
+
+  <target name="test_deleteline_skip">
+    <truncate file="a"/>
+    <appendline add="x=0" file="a"/>
+    <appendline add="y=1" file="a"/>
+    <appendline add="y=0" file="a"/>
+    <appendline add="y=0" file="a"/>
+    <appendline add="z=2" file="a"/>
+
+    <deleteline contain="x=0" next="1" skip="1" file="a"/>
+    <deleteline from="x" until="z" skip="2" file="a"/>
+    <property file="a"/>
+
+    <fail message="test `deleteline skip` failed: file 'a' should contain 'x'" unless="x"/>
+    <fail message="test `deleteline skip` failed: file 'a' should contain 'y'" unless="y"/>
+    <fail message="test `deleteline skip` failed: file 'a' should not contain 'z'" if="z"/>
+  </target>
+
+</project>

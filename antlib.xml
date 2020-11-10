@@ -1,0 +1,6 @@
+<antlib>
+  <taskdef name="deleteline" classname="my.tasks.DeleteLine"/>
+  <taskdef name="appendline" classname="my.tasks.AppendLine"/>
+  <taskdef name="replaceline" classname="my.tasks.ReplaceLine"/>
+  <taskdef name="trimline" classname="my.tasks.TrimLine"/>
+</antlib>

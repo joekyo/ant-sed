@@ -1,0 +1,154 @@
+<project name="tests" default="tests">
+
+  <taskdef resource="my/tasks/antlib.xml">
+    <classpath>
+      <pathelement location="../my-tasks.jar"/>
+    </classpath>
+  </taskdef>
+
+  <target name="tests">
+    <touch file="a"/>
+    <antcall target="test_replaceline"/>
+    <antcall target="test_replaceline_regex"/>
+    <antcall target="test_replaceline_next"/>
+    <antcall target="test_replaceline_multiple_lines"/>
+    <antcall target="test_replaceline_skip"/>
+    <antcall target="test_replaceline_from_until"/>
+    <antcall target="test_replaceline_all"/>
+    <antcall target="test_replaceline_append"/>
+    <delete file="a"/>
+  </target>
+
+
+  <target name="test_replaceline">
+    <truncate file="a"/>
+    <appendline add="x=0" file="a"/> <!-- x=0 -->
+
+    <replaceline contain="x" change="0" to="1" file="a"/> <!-- x=1 -->
+    <replaceline contain="1" to="y=2" file="a"/> <!-- y=2 -->
+
+    <property file="a"/>
+    <fail message="test `replaceline` failed: file 'a' should not contain 'x'" if="x"/>
+    <fail message="test `replaceline` failed: file 'a' should contain 'y'" unless="y"/>
+  </target>
+
+
+  <target name="test_replaceline_regex">
+    <truncate file="a"/>
+    <appendline add="x=0" file="a"/>
+    <appendline add="y=0" file="a"/>
+
+    <replaceline change="RE: \d" to="1" file="a"/>
+    <replaceline contain="RE: =\d" change="y" to="z" file="a"/>
+    <deleteline contain="x" file="a"/>
+
+    <property file="a"/>
+    <fail message="test `replaceline regex` failed: file 'a' should not contain 'x'" if="x"/>
+    <fail message="test `replaceline regex` failed: file 'a' should not contain 'y'" if="y"/>
+    <fail message="test `replaceline regex` failed: file 'a' should contain 'z'" unless="z"/>
+  </target>
+
+
+  <target name="test_replaceline_next">
+    <truncate file="a"/>
+    <appendline add="x=1" file="a"/>
+    <appendline add="x=1" file="a"/>
+    <appendline add="y=1" file="a"/>
+    <appendline add="y=1" file="a"/>
+
+    <replaceline contain="x=1" next="2" change="1" to="0" file="a"/>
+    <deleteline contain="RE: [x-z]=0" file="a"/>
+
+    <property file="a"/>
+    <fail message="test `replaceline next` failed: file 'a' should not contain 'x'" if="x"/>
+    <fail message="test `replaceline next` failed: file 'a' should contain 'y'" unless="y"/>
+  </target>
+
+
+  <target name="test_replaceline_multiple_lines">
+    <truncate file="a"/>
+    <appendline add="z=0" file="a"/>
+    <appendline add="x=1" file="a"/>
+    <appendline add="z=1" file="a"/>
+    <appendline add="z=1" file="a"/>
+
+    <replaceline contain="x=1" next="1" skip="1" to="y=0" file="a"/> <!-- z=0, x=1, y=0, z=1 -->
+    <replaceline contain="z=0" next="3" skip="2" to="x=1" file="a"/> <!-- z=0, x=1, x=1 -->
+    <deleteline contain="z=0" file="a"/> <!-- x=1, x=1 -->
+
+    <property file="a"/>
+    <fail message="test `replaceline multiple lines` failed: file 'a' should contain 'x'" unless="x"/>
+    <fail message="test `replaceline multiple lines` failed: file 'a' should not contain 'y'" if="y"/>
+    <fail message="test `replaceline multiple lines` failed: file 'a' should not contain 'z'" if="z"/>
+  </target>
+
+
+  <target name="test_replaceline_skip">
+    <truncate file="a"/>
+    <appendline add="z=0" file="a"/>
+    <appendline add="x=1" file="a"/>
+    <appendline add="z=1" file="a"/>
+    <appendline add="z=1" file="a"/>
+
+    <replaceline contain="z=0" next="2" skip="1" to="y=0" file="a"/>
+    <replaceline contain="z=0" next="2" skip="1" change="0" to="1" file="a"/>
+    <deleteline contain="z=0" next="2" skip="2" file="a"/>
+
+    <property file="a"/>
+    <fail message="test `replaceline skip` failed: file 'a' should not contain 'x'" if="x"/>
+    <fail message="test `replaceline skip` failed: file 'a' should contain 'y'" unless="y"/>
+    <fail message="test `replaceline skip` failed: file 'a' should contain 'z'" unless="z"/>
+  </target>
+
+
+  <target name="test_replaceline_from_until">
+    <truncate file="a"/>
+    <appendline add="z=0" file="a"/>
+    <appendline add="x=1" file="a"/>
+    <appendline add="z=1" file="a"/>
+    <appendline add="z=1" file="a"/>
+
+    <replaceline from="z=0" until="z=1" skip="1" to="y=0" file="a"/>
+    <replaceline from="z=0" until="z=2" skip="1" change="0" to="1" file="a"/>
+    <deleteline contain="z=0" next="2" skip="2" file="a"/>
+
+    <property file="a"/>
+    <fail message="test `replaceline from until` failed: file 'a' should not contain 'x'" if="x"/>
+    <fail message="test `replaceline from until` failed: file 'a' should contain 'y'" unless="y"/>
+    <fail message="test `replaceline from until` failed: file 'a' should contain 'z'" unless="z"/>
+  </target>
+
+
+  <target name="test_replaceline_all">
+    <truncate file="a"/>
+    <appendline add="x=1" file="a"/>
+    <appendline add="xx=2" file="a"/>
+    <appendline add="zxz=3" file="a"/>
+
+    <replaceline all="true" change="x" to="y" file="a"/>
+    <replaceline change="yy" to="z" file="a"/>
+    <replaceline all="true" change="z" to="x" file="a"/>
+    <replaceline change="x" to="y" file="a"/>
+
+    <property file="a"/>
+    <fail message="test `replaceline all` failed: file 'a' should not contain 'x'" if="x"/>
+    <fail message="test `replaceline all` failed: file 'a' should contain 'y'" unless="y"/>
+    <fail message="test `replaceline all` failed: file 'a' should not contain 'z'" if="z"/>
+    <fail message="test `replaceline all` failed: file 'a' should contain 'yyx'" unless="yyx"/>
+  </target>
+
+
+  <target name="test_replaceline_append">
+    <truncate file="a"/>
+
+    <replaceline contain="x" to="y=1" file="a"/>
+    <replaceline contain="x" next="2" skip="1" to="x=1" append="true" file="a"/>
+    <replaceline from="x" until="y" skip="1" to="z=2" append="true" file="a"/>
+
+    <property file="a"/>
+    <fail message="test `replaceline append` failed: file 'a' should contain 'x'" unless="x"/>
+    <fail message="test `replaceline append` failed: file 'a' should not contain 'y'" if="y"/>
+    <fail message="test `replaceline append` failed: file 'a' should contain 'z'" unless="z"/>
+  </target>
+
+</project>

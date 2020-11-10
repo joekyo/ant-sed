@@ -1,0 +1,86 @@
+<project name="tests" default="tests">
+
+  <taskdef resource="my/tasks/antlib.xml">
+    <classpath>
+      <pathelement location="../my-tasks.jar"/>
+    </classpath>
+  </taskdef>
+
+  <target name="tests">
+    <touch file="a"/>
+    <antcall target="test_trimline"/>
+    <antcall target="test_trimline_regex"/>
+    <antcall target="test_trimline_from_until"/>
+    <antcall target="test_trimline_next"/>
+    <delete file="a"/>
+  </target>
+
+
+  <target name="test_trimline">
+    <truncate file="a"/>
+    <appendline add=" #x=1" file="a"/>
+    <appendline add="y=2# " file="a"/>
+    <appendline add="/*z=3*/" file="a"/>
+
+    <trimline contain="x" prefix="#" file="a"/> <!-- x=1 -->
+    <trimline contain="y" suffix="#" file="a"/> <!-- x=1, y=2 -->
+    <trimline contain="z" prefix="/*" suffix="*/" file="a"/> <!-- x=1, y=2, z=3 -->
+    <deleteline contain="#" file="a"/>
+    <deleteline contain="*" file="a"/>
+
+    <property file="a"/>
+    <fail message="test `trimline` failed: file 'a' should contain 'x'" unless="x"/>
+    <fail message="test `trimline` failed: file 'a' should contain 'y'" unless="y"/>
+    <fail message="test `trimline` failed: file 'a' should contain 'z'" unless="z"/>
+  </target>
+
+
+  <target name="test_trimline_regex">
+    <truncate file="a"/>
+    <appendline add=" #x=1" file="a"/>
+    <appendline add="y=2# " file="a"/>
+    <appendline add="/*z=3*/" file="a"/>
+
+    <trimline contain="RE: x=\d" prefix="#" file="a"/> <!-- x=1 -->
+    <trimline contain="RE: ^y=" suffix="#" file="a"/> <!-- x=1, y=2 -->
+    <trimline contain="RE: z=\d" prefix="/*" suffix="*/" file="a"/> <!-- x=1, y=2, z=3 -->
+    <deleteline contain="#" file="a"/>
+    <deleteline contain="*" file="a"/>
+
+    <property file="a"/>
+    <fail message="test `trimline regex` failed: file 'a' should contain 'x'" unless="x"/>
+    <fail message="test `trimline regex` failed: file 'a' should contain 'y'" unless="y"/>
+    <fail message="test `trimline regex` failed: file 'a' should contain 'z'" unless="z"/>
+  </target>
+
+
+  <target name="test_trimline_from_until">
+    <truncate file="a"/>
+    <appendline add="#x=1" file="a"/>
+    <appendline add="#y=2 " file="a"/>
+    <appendline add="#z=3 " file="a"/>
+
+    <trimline from="x" until="z" skip="1" prefix="#" file="a"/> <!-- y=2, z=3 -->
+
+    <property file="a"/>
+    <fail message="test `trimline from until` failed: file 'a' should not contain 'x'" if="x"/>
+    <fail message="test `trimline from until` failed: file 'a' should contain 'y'" unless="y"/>
+    <fail message="test `trimline from until` failed: file 'a' should contain 'z'" unless="z"/>
+  </target>
+
+
+  <target name="test_trimline_next">
+    <truncate file="a"/>
+    <appendline add="#x=1" file="a"/>
+    <appendline add="#y=2 " file="a"/>
+    <appendline add="#z=3 " file="a"/>
+
+    <trimline contain="x" next="1" skip="1" prefix="#" file="a"/> <!-- y=2 -->
+
+    <property file="a"/>
+    <fail message="test `trimline next` failed: file 'a' should contain not 'x'" if="x"/>
+    <fail message="test `trimline next` failed: file 'a' should contain 'y'" unless="y"/>
+    <fail message="test `trimline next` failed: file 'a' should not contain 'z'" if="z"/>
+  </target>
+
+</project>
