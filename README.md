@@ -30,7 +30,7 @@ This works fine, except it looks a bit ugly; and people don't know `sed` cannot 
 <replaceline contain="foo" change="bar" to="baz" files="a.txt,b.txt"/>
 ```
 
-Looks much better, doesn't it? Not only this will improve the readability, but also an `sed` is not required to be installed in your system.
+Looks much better, right?
 
 ## What are these tasks?
 
@@ -62,7 +62,7 @@ Regular expressions are supported.
 
 Read `doc.md` for more details about how to use these tasks.
 
-## How to add them to my Ant build script?
+## How to add them to your Ant build script?
 
 There is a already built `my-tasks.jar` exists in this repo.
 
@@ -81,7 +81,7 @@ The `build.xml` in this repo will be executed, and a new `my-tasks.jar` will be 
 
 **Note that at least JDK 8 and Ant 1.10.x are required**
 
-## What about testing?
+## About testing
 
 I have created tests to make sure that these tasks work as I expected.
 
