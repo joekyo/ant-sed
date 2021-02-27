@@ -60,7 +60,7 @@ Plus another task for trimming prefix and suffix.
 
 Regular expressions are supported.
 
-Read `doc.md` for more details about how to use these tasks.
+Read [doc.md](https://github.com/joekyo/ant-sed/blob/master/doc.md) for more details about how to use these tasks.
 
 ## How to add them to your Ant build script?
 

@@ -18,12 +18,6 @@ Find the line contains `foo`, replace `bar` to `baz`
 <replaceline contain="foo" change="bar" to="baz" file="a.txt"/>
 ```
 
-Find the line contains `foo`, replace to `bar`. If `foo` is not found, append `bar` as a new line to the end of the file
-
-```xml
-<replaceline contain="foo" to="bar" append="true" file="a.txt"/>
-```
-
 ### When `change` is not set, the whole lines will be replaced
 
 Find the line contains `foo`, change the whole line to `bar`
@@ -36,6 +30,12 @@ Fine the line contains `foo`, and the next `2` lines, change these lines to `bar
 
 ```xml
 <replaceline contain="foo" next="2" to="bar" file="a.txt"/>
+```
+
+Find the line contains `foo`, replace the whole line to `bar`. If `foo` is not found, add `bar` as a new line to the end of the file
+
+```xml
+<replaceline contain="foo" to="bar" append="true" file="a.txt"/>
 ```
 
 ## AppendLine
@@ -111,7 +111,8 @@ Find line contains `foo`, remove prefix `/ *` and suffix `* /`
 ```
 
 **Note that spaces will be trimmed too, so ` #foo` will become `foo`.**
-**If you are modifying a Python script, this may be not what you want**
+
+**If you are modifying a Python script, this may be not what you want.**
 
 ## Block Mode
 
@@ -135,9 +136,9 @@ Attribute `skip` can be used to skip the first `n` lines
 <deleteline from="foo" until="bar" skip="1" file="a.txt"/>
 ```
 
-### Regular Expression
+## Regular Expression
 
-Attributes which are used for matching pattern, like `contain` `change` `from` `until` `before` `after`, support regular expression.
+Attributes which are used for pattern matching, like `contain` `change` `from` `until` `before` `after`, support regular expression.
 
 ```xml
 <replaceline change="RE: foo?" to="bar" file="a.txt"/>
