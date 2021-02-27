@@ -4,21 +4,6 @@ import java.util.List;
 
 import org.apache.tools.ant.BuildException;
 
-/*
-    usage:
-        <deleteline contain="x" files="a, b"/>
-        <deleteline from="x" until="y" files="a, b"/>
-        <deleteline from="x" until="y" skip="1" files="a, b"/>
-
-        <deleteline contain="x" next="1" files="a, b"/>  <= delete 2 lines
-        <deleteline contain="x" next="1" skip="1" files="a, b"/>  <= delete next line of 'x'
-
-    regex:
-        <deleteline contain="RE: x" files="a, b"/>
-        <deleteline from="RE: x" until="RE: y" files="a, b"/>
-
-*/
-
 public class DeleteLine extends EditLine {
 
     protected void editFile(String file) throws BuildException {

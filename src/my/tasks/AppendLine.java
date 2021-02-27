@@ -5,19 +5,6 @@ import java.util.regex.Pattern;
 
 import org.apache.tools.ant.BuildException;
 
-/*
-    usage:
-        <appendline add="last line" files="a, b"/>
-        <appendline after="x" add="y" files="a, b"/>
-        <appendline before="x" add="y" files="a, b"/>
-        <appendline file="a" after="x" concat="b"/>
-
-    regex:
-        <appendline after="RE: x" add="y" files="a, b"/>
-        <appendline before="RE: x" add="y" files="a, b"/>
-
-*/
-
 public class AppendLine extends EditLine {
 
     private String after, before;
@@ -49,14 +36,14 @@ public class AppendLine extends EditLine {
     }
 
     private int appendOrConcat(StringBuilder sb, String text, List<String> concatLines) {
-            if (text != null) {
-                appendline(sb, text);
-                return 1;
-            }
-            for (String line : concatLines) {
-                appendline(sb, line);
-            }
-            return concatLines.size();
+        if (text != null) {
+            appendline(sb, text);
+            return 1;
+        }
+        for (String line : concatLines) {
+            appendline(sb, line);
+        }
+        return concatLines.size();
     }
 
     protected void editFile(String file) throws BuildException {
@@ -77,7 +64,7 @@ public class AppendLine extends EditLine {
             if (before != null) {
                 sb.append(String.format(" before '%s'", before));
             } else if (after != null) {
-                sb.append(String.format(" after '%s'",  after));
+                sb.append(String.format(" after '%s'", after));
             }
             log(sb.toString());
         }

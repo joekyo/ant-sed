@@ -6,29 +6,6 @@ import java.util.regex.Pattern;
 
 import org.apache.tools.ant.BuildException;
 
-/*
-    usage:
-        <replaceline change="x" to="y" files="a, b"/>  <= replace first 'x' to 'y'
-        <replaceline change="x" to="y" all="true" files="a, b"/>  <= replace all 'x' to 'y'
-
-        <replaceline contain="z" change="x" to="y" files="a, b"/>
-        <replaceline contain="z" next="1" change="x" to="y" files="a, b"/>
-        <replaceline contain="z" next="2" skip="1" change="x" to="y" files="a, b"/>
-
-    regex:
-        <replaceline change="RE: x" to="y" files="a, b"/>
-        <replaceline contain="RE: z" change="RE: x" to="y" files="a, b"/>
-
-    when 'change' is not set, multiple lines can be changed to a single line:
-        <replaceline contain="z" to="y" files="a, b"/>   <= replace the whole line to 'y'
-        <replaceline contain="z" next="2" to="y" files="a, b"/>   <= replace 3 lines to 'y'
-        <replaceline contain="z" next="2" skip="1" to="y" files="a, b"/>   <= replace 2 lines to 'y'
-
-    when no lines were changed, and 'append' is true, append 'to' to file
-        <replaceline contain="x" to="y" append="true" files="a, b"/>
-
-*/
-
 public class ReplaceLine extends EditLine {
 
     private String change, to;
@@ -112,7 +89,7 @@ public class ReplaceLine extends EditLine {
                 sb.append(String.format(" in lines from '%s' until '%s'", from, until));
             }
 
-        // multiple lines to a single line mode
+            // multiple lines to a single line mode
         } else {
             if (contain != null) {
                 sb.append(String.format("Replace line which contains '%s'", contain));
@@ -174,8 +151,8 @@ public class ReplaceLine extends EditLine {
                     if (change != null) {
                         appendline(sb, maybeReplaceLine(line));
 
-                    // when 'contain' and 'next' are set, but 'change' is not set,
-                    // the next 'next' lines are changed to 'to'
+                        // when 'contain' and 'next' are set, but 'change' is not set,
+                        // the next 'next' lines are changed to 'to'
                     } else {
                         // lines are deleted here
                         changedLines++;
@@ -186,9 +163,9 @@ public class ReplaceLine extends EditLine {
                         }
                     }
 
-                // 'contain' is set and the line is matched, try replacing 'change' to 'to'
-                } else if (containRE != null && containRE.matcher(line).find() ||
-                    containRE == null && contain != null && line.contains(contain)) {
+                    // 'contain' is set and the line is matched, try replacing 'change' to 'to'
+                } else if (containRE != null && containRE.matcher(line).find()
+                        || containRE == null && contain != null && line.contains(contain)) {
 
                     foundContain = true;
                     nextLines = next;
@@ -207,8 +184,8 @@ public class ReplaceLine extends EditLine {
                             changedLines++;
                             continue;
 
-                        // 'contain' is matched, and 'change' is not set
-                        //  if line != 'to', change the whole line to 'to'
+                            // 'contain' is matched, and 'change' is not set
+                            // if line != 'to', change the whole line to 'to'
                         } else {
                             if (line.equals(to)) {
                                 appendline(sb, line);
@@ -231,8 +208,8 @@ public class ReplaceLine extends EditLine {
             for (String line : lines) {
                 // enter 'from' ~ 'until' block
                 if (!inBlock) {
-                    if (fromRE != null && fromRE.matcher(line).find() ||
-                    fromRE == null && from != null && line.contains(from)) {
+                    if (fromRE != null && fromRE.matcher(line).find()
+                            || fromRE == null && from != null && line.contains(from)) {
                         skipLines = skip;
                         inBlock = true;
 
@@ -240,23 +217,23 @@ public class ReplaceLine extends EditLine {
                             skipLines--;
                             appendline(sb, line);
 
-                        // 'change' is set; change 'change' to 'to' in the block
+                            // 'change' is set; change 'change' to 'to' in the block
                         } else if (change != null) {
                             appendline(sb, maybeReplaceLine(line));
 
-                        // 'change' is not set; change the next 'next' lines to 'to'
+                            // 'change' is not set; change the next 'next' lines to 'to'
                         } else {
                             // lines are deleted here
                             changedLines++;
                         }
-                    continue;
+                        continue;
                     }
                 }
 
                 // exit block
                 if (inBlock) {
-                    if (untilRE != null && untilRE.matcher(line).find() ||
-                        untilRE == null && until != null && line.contains(until)) {
+                    if (untilRE != null && untilRE.matcher(line).find()
+                            || untilRE == null && until != null && line.contains(until)) {
 
                         skipLines = 0;
                         inBlock = false;
@@ -264,11 +241,11 @@ public class ReplaceLine extends EditLine {
                         if (change != null) {
                             appendline(sb, maybeReplaceLine(line));
 
-                        // add the single line
+                            // add the single line
                         } else {
                             appendline(sb, to);
                         }
-                    continue;
+                        continue;
                     }
                 }
 
@@ -282,7 +259,7 @@ public class ReplaceLine extends EditLine {
                             appendline(sb, maybeReplaceLine(line));
                         }
 
-                    // 'change' is not set; change the next 'next' lines are changed to 'to'
+                        // 'change' is not set; change the next 'next' lines are changed to 'to'
                     } else {
                         // lines are deleted here
                         changedLines++;

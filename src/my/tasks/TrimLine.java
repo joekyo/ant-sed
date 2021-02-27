@@ -4,25 +4,6 @@ import java.util.List;
 
 import org.apache.tools.ant.BuildException;
 
-/*
-    usage:
-        <trimline contain="x" prefix="#" files="a, b"/>
-        <trimline contain="x" prefix="/ *" suffix="* /" files="a, b"/>
-
-        <trimline from="x" until="y" prefix="#" files="a, b"/>
-        <trimline from="x" until="y" skip="1" prefix="#" files="a, b"/>
-
-        <trimline contain="x" next="1" prefix="#" files="a, b"/>
-        <trimline contain="x" next="1" skip="1" prefix="#" files="a, b"/>
-
-    regex:
-        <trimline contain="RE: x" prefix="#" files="a, b"/>
-        <trimline contain="RE: x" prefix="/ *" suffix="* /" files="a, b"/>
-
-    Note that spaces will be trimmed too, ' #x ' will become 'x'.
-
-*/
-
 public class TrimLine extends EditLine {
 
     private String prefix, suffix;
